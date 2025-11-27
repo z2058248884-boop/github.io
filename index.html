@@ -85,5 +85,430 @@
         }
     </style>
 </head>
-<body class="bg-dark text-slate-200 overflow-x-hidden relative min-h-screen font-sans selec
-加载更多
+<body class="bg-dark text-slate-200 overflow-x-hidden relative min-h-screen font-sans selection:bg-primary selection:text-white">
+
+    <!-- 动态粒子背景 Canvas -->
+    <canvas id="canvas" class="fixed top-0 left-0 w-full h-full -z-10"></canvas>
+
+    <!-- 背景装饰光斑 (使用 CSS 动画) -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
+        <div class="absolute top-0 left-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+        <div class="absolute top-0 right-1/4 w-96 h-96 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+        <div class="absolute -bottom-32 left-1/3 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+    </div>
+
+    <!-- 导航栏 -->
+    <nav class="fixed w-full z-50 top-0 start-0 border-b border-white/10 bg-dark/80 backdrop-blur-md transition-all duration-300" id="navbar">
+        <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+            <a href="#" class="flex items-center space-x-3 rtl:space-x-reverse group">
+                <div class="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center text-white font-bold text-xl group-hover:rotate-12 transition-transform">
+                    M
+                </div>
+                <span class="self-center text-2xl font-semibold whitespace-nowrap text-white">MySpace</span>
+            </a>
+            
+            <!-- 移动端菜单按钮 -->
+            <button data-collapse-toggle="navbar-sticky" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-400 rounded-lg md:hidden hover:bg-gray-800 focus:outline-none" aria-controls="navbar-sticky" aria-expanded="false" id="menu-btn">
+                <span class="sr-only">Open main menu</span>
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+            
+            <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-sticky">
+                <ul class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-700 rounded-lg bg-gray-800/50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-transparent">
+                    <li>
+                        <a href="#home" class="block py-2 px-3 text-white bg-primary rounded md:bg-transparent md:text-primary md:p-0" aria-current="page">首页</a>
+                    </li>
+                    <li>
+                        <a href="#about" class="block py-2 px-3 text-gray-300 rounded hover:bg-gray-700 md:hover:bg-transparent md:hover:text-primary md:p-0 transition-colors">关于我</a>
+                    </li>
+                    <li>
+                        <a href="#articles" class="block py-2 px-3 text-gray-300 rounded hover:bg-gray-700 md:hover:bg-transparent md:hover:text-primary md:p-0 transition-colors">文章</a>
+                    </li>
+                    <li>
+                        <a href="#contact" class="block py-2 px-3 text-gray-300 rounded hover:bg-gray-700 md:hover:bg-transparent md:hover:text-primary md:p-0 transition-colors">联系</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 移动端菜单下拉 (JS控制) -->
+    <div id="mobile-menu" class="fixed inset-x-0 top-16 bg-dark/95 backdrop-blur-xl border-b border-white/10 transform -translate-y-full transition-transform duration-300 md:hidden z-40">
+        <ul class="flex flex-col p-4 space-y-4 text-center font-medium">
+            <li><a href="#home" class="block py-2 text-primary">首页</a></li>
+            <li><a href="#about" class="block py-2 text-white hover:text-primary">关于我</a></li>
+            <li><a href="#articles" class="block py-2 text-white hover:text-primary">文章</a></li>
+            <li><a href="#contact" class="block py-2 text-white hover:text-primary">联系</a></li>
+        </ul>
+    </div>
+
+    <!-- Hero 区域 -->
+    <section id="home" class="min-h-screen flex items-center justify-center pt-16 relative">
+        <div class="text-center px-4 max-w-4xl mx-auto z-10">
+            <div class="mb-6 relative inline-block">
+                <!-- 头像占位符 -->
+                <div class="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-primary/50 p-1 mx-auto bg-gray-800 overflow-hidden relative group">
+                    <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix" alt="Profile" class="w-full h-full rounded-full object-cover transition-transform duration-500 group-hover:scale-110">
+                </div>
+                <div class="absolute bottom-2 right-2 md:right-0 w-6 h-6 bg-green-500 border-4 border-dark rounded-full"></div>
+            </div>
+            
+            <h1 class="text-4xl md:text-6xl font-bold mb-4 tracking-tight">
+                你好，我是 <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary neon-text">开发者</span>
+            </h1>
+            
+            <div class="text-xl md:text-2xl text-gray-400 mb-8 h-8 flex justify-center items-center">
+                <span>我热衷于&nbsp;</span>
+                <span id="typewriter" class="text-primary font-mono cursor"></span>
+            </div>
+            
+            <p class="text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+                这里是我的数字花园。我在这里记录技术探索的足迹，分享关于编程、设计与生活的思考。欢迎来到我的世界。
+            </p>
+            
+            <div class="flex flex-col md:flex-row justify-center gap-4">
+                <a href="#articles" class="px-8 py-3 rounded-full bg-gradient-to-r from-primary to-secondary text-white font-bold hover:shadow-lg hover:shadow-cyan-500/50 transition-all transform hover:-translate-y-1">
+                    <i class="fas fa-book-open mr-2"></i> 阅读文章
+                </a>
+                <a href="https://github.com" target="_blank" class="px-8 py-3 rounded-full border border-gray-600 hover:border-white hover:bg-white/5 transition-all text-white font-bold">
+                    <i class="fab fa-github mr-2"></i> GitHub
+                </a>
+            </div>
+        </div>
+        
+        <!-- 向下滚动提示 -->
+        <a href="#about" class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce text-gray-500 hover:text-white transition-colors">
+            <i class="fas fa-chevron-down text-2xl"></i>
+        </a>
+    </section>
+
+    <!-- 关于我 -->
+    <section id="about" class="py-20 px-4">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex flex-col md:flex-row gap-12 items-center">
+                <div class="w-full md:w-1/2 opacity-0 transform translate-y-10 transition-all duration-1000" id="about-img">
+                    <div class="relative rounded-2xl overflow-hidden glass-card p-2 group">
+                        <div class="absolute inset-0 bg-gradient-to-r from-primary to-secondary opacity-20 group-hover:opacity-30 transition-opacity"></div>
+                        <!-- 这里可以用代码截图或者你的工作台照片 -->
+                        <div class="bg-gray-900 rounded-xl h-64 md:h-80 flex items-center justify-center border border-gray-700">
+                             <div class="text-gray-600 font-mono text-sm p-4 text-left w-full">
+                                <span class="text-pink-500">const</span> <span class="text-yellow-300">developer</span> = {<br>
+                                &nbsp;&nbsp;name: <span class="text-green-400">'你的名字'</span>,<br>
+                                &nbsp;&nbsp;skills: [<span class="text-green-400">'HTML'</span>, <span class="text-green-400">'CSS'</span>, <span class="text-green-400">'JS'</span>],<br>
+                                &nbsp;&nbsp;coffee: <span class="text-purple-400">true</span>,<br>
+                                &nbsp;&nbsp;bugs: <span class="text-purple-400">0</span> <span class="text-gray-500">// hopefully</span><br>
+                                };
+                             </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="w-full md:w-1/2 space-y-6 opacity-0 transform translate-y-10 transition-all duration-1000 delay-200" id="about-text">
+                    <h2 class="text-3xl md:text-4xl font-bold flex items-center">
+                        <span class="w-12 h-1 bg-primary mr-4 rounded-full"></span>
+                        关于我
+                    </h2>
+                    <p class="text-gray-400 leading-relaxed">
+                        我是一名充满激情的前端开发者/技术博主。我喜欢折腾新技术，并将其转化为优美的用户体验。
+                        <br><br>
+                        这个博客是我用来存档知识碎片的地方。你可以在这里找到关于 <strong>Web 开发</strong>、<strong>效率工具</strong> 以及我的 <strong>个人项目</strong> 的内容。
+                    </p>
+                    
+                    <!-- 技能标签 -->
+                    <div class="flex flex-wrap gap-3 mt-4">
+                        <span class="px-4 py-2 rounded-full bg-blue-900/50 text-blue-300 border border-blue-700/50 text-sm">JavaScript</span>
+                        <span class="px-4 py-2 rounded-full bg-teal-900/50 text-teal-300 border border-teal-700/50 text-sm">Vue/React</span>
+                        <span class="px-4 py-2 rounded-full bg-orange-900/50 text-orange-300 border border-orange-700/50 text-sm">Git</span>
+                        <span class="px-4 py-2 rounded-full bg-purple-900/50 text-purple-300 border border-purple-700/50 text-sm">Design</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 文章列表区域 -->
+    <section id="articles" class="py-20 px-4 bg-gray-900/50">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center">
+                最新<span class="text-primary">文章</span>
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- 文章卡片 1 -->
+                <article class="glass-card rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 opacity-0 transform translate-y-10 article-card">
+                    <div class="h-48 bg-gradient-to-br from-blue-900 to-slate-900 flex items-center justify-center relative overflow-hidden group">
+                        <!-- 装饰图 -->
+                        <i class="fas fa-code text-6xl text-white/10 group-hover:scale-110 transition-transform duration-500"></i>
+                        <div class="absolute top-4 right-4 bg-primary text-dark text-xs font-bold px-2 py-1 rounded">技术</div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center text-gray-500 text-sm mb-3">
+                            <i class="far fa-calendar-alt mr-2"></i> 2023-11-20
+                        </div>
+                        <h3 class="text-xl font-bold mb-3 hover:text-primary transition-colors cursor-pointer">
+                            如何使用 Tailwind CSS 快速构建网站
+                        </h3>
+                        <p class="text-gray-400 text-sm mb-4 line-clamp-3">
+                            Tailwind CSS 是一个功能类优先的 CSS 框架。在这篇文章中，我们将探讨它的核心概念以及如何提高开发效率...
+                        </p>
+                        <a href="#" class="inline-flex items-center text-primary hover:text-white transition-colors text-sm font-semibold group">
+                            阅读更多 <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                    </div>
+                </article>
+
+                <!-- 文章卡片 2 -->
+                <article class="glass-card rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 delay-100 opacity-0 transform translate-y-10 article-card">
+                    <div class="h-48 bg-gradient-to-br from-purple-900 to-slate-900 flex items-center justify-center relative overflow-hidden group">
+                        <i class="fas fa-brain text-6xl text-white/10 group-hover:scale-110 transition-transform duration-500"></i>
+                        <div class="absolute top-4 right-4 bg-secondary text-dark text-xs font-bold px-2 py-1 rounded">随笔</div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center text-gray-500 text-sm mb-3">
+                            <i class="far fa-calendar-alt mr-2"></i> 2023-11-15
+                        </div>
+                        <h3 class="text-xl font-bold mb-3 hover:text-primary transition-colors cursor-pointer">
+                            程序员的自我修养与成长之路
+                        </h3>
+                        <p class="text-gray-400 text-sm mb-4 line-clamp-3">
+                            除了写代码，我们还需要关注什么？本文总结了我在职业生涯早期学到的关于沟通、学习和健康的重要教训。
+                        </p>
+                        <a href="#" class="inline-flex items-center text-primary hover:text-white transition-colors text-sm font-semibold group">
+                            阅读更多 <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                    </div>
+                </article>
+
+                <!-- 文章卡片 3 -->
+                <article class="glass-card rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 delay-200 opacity-0 transform translate-y-10 article-card">
+                    <div class="h-48 bg-gradient-to-br from-emerald-900 to-slate-900 flex items-center justify-center relative overflow-hidden group">
+                        <i class="fas fa-terminal text-6xl text-white/10 group-hover:scale-110 transition-transform duration-500"></i>
+                        <div class="absolute top-4 right-4 bg-emerald-400 text-dark text-xs font-bold px-2 py-1 rounded">工具</div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center text-gray-500 text-sm mb-3">
+                            <i class="far fa-calendar-alt mr-2"></i> 2023-10-05
+                        </div>
+                        <h3 class="text-xl font-bold mb-3 hover:text-primary transition-colors cursor-pointer">
+                            我的 VS Code 必备插件清单
+                        </h3>
+                        <p class="text-gray-400 text-sm mb-4 line-clamp-3">
+                            工欲善其事，必先利其器。分享我日常开发中离不开的 10 个 VS Code 插件，帮助你提升编码速度。
+                        </p>
+                        <a href="#" class="inline-flex items-center text-primary hover:text-white transition-colors text-sm font-semibold group">
+                            阅读更多 <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                    </div>
+                </article>
+
+            </div>
+            
+            <div class="text-center mt-12">
+                <button class="px-6 py-2 border border-gray-600 rounded-full hover:bg-white/10 transition-colors text-sm text-gray-300">
+                    查看归档
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 联系方式 -->
+    <section id="contact" class="py-20 px-4">
+        <div class="max-w-4xl mx-auto glass-card rounded-2xl p-8 md:p-12 text-center relative overflow-hidden">
+             <!-- 装饰背景 -->
+             <div class="absolute -top-24 -right-24 w-48 h-48 bg-primary/20 rounded-full blur-3xl"></div>
+             <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-secondary/20 rounded-full blur-3xl"></div>
+             
+             <h2 class="text-3xl font-bold mb-6">保持<span class="text-primary">联系</span></h2>
+             <p class="text-gray-400 mb-8 max-w-xl mx-auto">
+                 无论是技术交流、项目合作，还是单纯想打个招呼，我都随时欢迎。
+             </p>
+             
+             <div class="flex justify-center space-x-6 mb-8">
+                 <a href="#" class="w-12 h-12 rounded-full bg-gray-800 flex items-center justify-center hover:bg-white hover:text-black transition-all transform hover:scale-110">
+                     <i class="fab fa-github text-xl"></i>
+                 </a>
+                 <a href="#" class="w-12 h-12 rounded-full bg-gray-800 flex items-center justify-center hover:bg-[#1DA1F2] hover:text-white transition-all transform hover:scale-110">
+                     <i class="fab fa-twitter text-xl"></i>
+                 </a>
+                 <a href="#" class="w-12 h-12 rounded-full bg-gray-800 flex items-center justify-center hover:bg-[#c71610] hover:text-white transition-all transform hover:scale-110">
+                     <i class="fas fa-envelope text-xl"></i>
+                 </a>
+             </div>
+             
+             <p class="text-sm text-gray-500">
+                 &copy; 2024 MySpace. Built with HTML, Tailwind & Magic.
+             </p>
+        </div>
+    </section>
+
+    <!-- JavaScript 逻辑 -->
+    <script>
+        // 1. 移动端菜单切换
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        menuBtn.addEventListener('click', () => {
+            if (mobileMenu.classList.contains('-translate-y-full')) {
+                mobileMenu.classList.remove('-translate-y-full');
+            } else {
+                mobileMenu.classList.add('-translate-y-full');
+            }
+        });
+
+        // 点击菜单项后自动关闭菜单
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('-translate-y-full');
+            });
+        });
+
+        // 2. 打字机效果
+        const textElement = document.getElementById('typewriter');
+        const phrases = ['前端开发', 'UI 设计', '写文章', '开源项目'];
+        let phraseIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        let typeSpeed = 100;
+
+        function type() {
+            const currentPhrase = phrases[phraseIndex];
+            
+            if (isDeleting) {
+                textElement.textContent = currentPhrase.substring(0, charIndex - 1);
+                charIndex--;
+                typeSpeed = 50;
+            } else {
+                textElement.textContent = currentPhrase.substring(0, charIndex + 1);
+                charIndex++;
+                typeSpeed = 150;
+            }
+
+            if (!isDeleting && charIndex === currentPhrase.length) {
+                isDeleting = true;
+                typeSpeed = 2000; // 停顿一下
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                phraseIndex = (phraseIndex + 1) % phrases.length;
+                typeSpeed = 500;
+            }
+
+            setTimeout(type, typeSpeed);
+        }
+        
+        document.addEventListener('DOMContentLoaded', type);
+
+        // 3. 滚动动画 (Scroll Reveal)
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // 观察关于我部分的图片和文字
+        observer.observe(document.getElementById('about-img'));
+        observer.observe(document.getElementById('about-text'));
+        
+        // 观察所有文章卡片
+        document.querySelectorAll('.article-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // 4. 星空粒子 Canvas 动画
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let width, height;
+        let particles = [];
+        
+        // 调整 Canvas 大小
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+        
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.5; // 速度
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 2;
+                this.color = Math.random() > 0.5 ? 'rgba(56, 189, 248, ' : 'rgba(129, 140, 248, '; // primary or secondary color
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // 边界检查，碰到边缘反弹
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color + '0.5)';
+                ctx.fill();
+            }
+        }
+
+        // 初始化粒子
+        function initParticles() {
+            particles = [];
+            const particleCount = Math.floor(width * height / 15000); // 根据屏幕面积决定粒子数量
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        initParticles();
+        window.addEventListener('resize', initParticles);
+
+        // 动画循环
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                
+                // 连线逻辑
+                for (let j = i; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < 100) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${0.1 - distance/1000})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+        
+        animate();
+    </script>
+</body>
+</html>
